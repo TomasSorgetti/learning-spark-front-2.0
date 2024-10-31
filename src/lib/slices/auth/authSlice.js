@@ -23,23 +23,21 @@ const authSlice = createSlice({
 });
 
 export const verifyUserAuthentication = () => async (dispatch) => {
-  try {
-    const user = await checkAuth();
-
-    dispatch(setUser(user.data));
-  } catch (error) {
-    console.error("Error verificando autenticación:", error);
+  const response = await checkAuth();
+  const res = await response.json();
+  if (!res.success) {
+    throw new Error(res.errorCode);
   }
+  dispatch(setUser(res.data));
 };
 
 export const refreshUserAuthentication = () => async (dispatch) => {
-  try {
-    const user = await refreshAuth();
-
-    dispatch(setUser(user.data));
-  } catch (error) {
-    console.error("Error refrescando autenticación:", error);
+  const response = await refreshAuth();
+  const res = await response.json();
+  if (!res.success) {
+    throw new Error(res.errorCode);
   }
+  dispatch(setUser(res.data));
 };
 
 export const { setUser, logout } = authSlice.actions;

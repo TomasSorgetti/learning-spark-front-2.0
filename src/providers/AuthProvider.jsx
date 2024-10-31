@@ -6,13 +6,12 @@ import {
   verifyUserAuthentication,
   refreshUserAuthentication,
 } from "../lib/slices/auth/authSlice";
-import {
-  setLoadingState,
-  setErrorState,
-} from "../lib/slices/loading/loadingSlice";
+import { setLoadingState } from "../lib/slices/loading/loadingSlice";
+import { useRouter } from "next/navigation";
 
 const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     const checkUserAuthentication = async () => {
@@ -20,11 +19,12 @@ const AuthProvider = ({ children }) => {
       try {
         await dispatch(verifyUserAuthentication());
       } catch (error) {
-        console.error("Authentication error: Trying to refresh ", error);
+        console.error(error.message);
         try {
           await dispatch(refreshUserAuthentication());
         } catch (refreshError) {
-          dispatch(setErrorState(refreshError.message));
+          console.log(refreshError.message);
+          router.push("/login");
         }
       } finally {
         dispatch(setLoadingState(false));
@@ -32,7 +32,7 @@ const AuthProvider = ({ children }) => {
     };
 
     checkUserAuthentication();
-  }, [dispatch]);
+  }, [dispatch, router]);
 
   return <>{children}</>;
 };

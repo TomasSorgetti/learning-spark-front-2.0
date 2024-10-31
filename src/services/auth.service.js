@@ -12,27 +12,15 @@ export const loginService = async (data) => {
 };
 
 export const checkAuth = async () => {
-  const response = await fetch(`${BASE_URL}/auth/me`, {
+  return await fetch(`${BASE_URL}/auth/me`, {
     method: "GET",
     credentials: "include",
   });
-
-  if (!response.ok) {
-    throw new Error("No se pudo verificar la autenticación");
-  }
-
-  return await response.json();
 };
 
 export const refreshAuth = async () => {
-  const response = await fetch(`${BASE_URL}/auth/refresh`, {
+  return await fetch(`${BASE_URL}/auth/refresh`, {
     method: "GET",
     credentials: "include",
   });
-
-  if (!response.ok) {
-    throw new Error("No se pudo refrescar la autenticación");
-  }
-
-  return await response.json();
 };
