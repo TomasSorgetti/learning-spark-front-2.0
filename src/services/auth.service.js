@@ -41,3 +41,10 @@ export const logoutService = async () => {
     credentials: "include",
   });
 };
+
+export const verifyEmailService = async (code) => {
+  return await fetch(`${BASE_URL}/auth/verify/${code}`, {
+    method: "GET",
+    credentials: "include",
+  });
+};

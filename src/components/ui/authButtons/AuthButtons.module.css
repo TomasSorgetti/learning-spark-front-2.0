@@ -1,0 +1,33 @@
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.button {
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+.menu {
+  position: absolute;
+  top: calc(100% + 1rem);
+  right: 0;
+  padding: 1rem 2rem;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.45s ease;
+}
+.menu.active {
+  opacity: 1;
+  visibility: visible;
+}
+.menu a {
+  color: black;
+  text-decoration: none;
+}

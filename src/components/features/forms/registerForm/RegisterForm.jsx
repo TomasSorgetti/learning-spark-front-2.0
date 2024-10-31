@@ -1,14 +1,12 @@
 "use client";
 
 import { FormField } from "@/components/ui";
-import { useAppDispatch } from "@/lib/hooks";
 import { registerService } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function RegisterForm() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState("");
   const [formData, setFormData] = useState({
@@ -31,12 +29,12 @@ export default function RegisterForm() {
       const fetchData = async () => {
         const response = await registerService(formData);
         const res = await response.json();
+
         if (!res.success) {
-          throw new Error(res.message);
+          throw new Error(res.errorCode);
         } else {
           setFetchError("");
-          dispatch(setUser(res.data.user));
-          router.push("/");
+          router.push("/verify");
         }
       };
       await fetchData();
