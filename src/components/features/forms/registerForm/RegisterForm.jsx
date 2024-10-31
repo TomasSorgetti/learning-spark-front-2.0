@@ -1,9 +1,16 @@
 "use client";
 
 import { FormField } from "@/components/ui";
+import { useAppDispatch } from "@/lib/hooks";
+import { registerService } from "@/services/auth.service";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function RegisterForm() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     lastname: "",
@@ -11,13 +18,33 @@ export default function RegisterForm() {
     password: "",
     confirm: "",
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    setIsLoading(true);
+    try {
+      const fetchData = async () => {
+        const response = await registerService(formData);
+        const res = await response.json();
+        if (!res.success) {
+          throw new Error(res.message);
+        } else {
+          setFetchError("");
+          dispatch(setUser(res.data.user));
+          router.push("/");
+        }
+      };
+      await fetchData();
+    } catch (error) {
+      setFetchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -57,7 +84,7 @@ export default function RegisterForm() {
         value={formData.confirm}
         name="confirm"
       />
-      <button type="submit">Login</button>
+      <button type="submit">Register</button>
     </form>
   );
 }

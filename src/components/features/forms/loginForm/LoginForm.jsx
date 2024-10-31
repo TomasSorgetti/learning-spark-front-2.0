@@ -6,8 +6,13 @@ import { useState } from "react";
 import { useAppDispatch } from "@/lib/hooks";
 import { setUser } from "@/lib/slices/auth/authSlice";
 import { useRouter } from "next/navigation";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 export default function LoginForm() {
+  const [isAuthenticated, setIsAuthenticated] = useLocalStorage(
+    "isAuthenticated",
+    false
+  );
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +40,7 @@ export default function LoginForm() {
           setFetchError("");
           dispatch(setUser(res.data.user));
           router.push("/");
+          setIsAuthenticated(true);
         }
       };
       await fetchData();
