@@ -18,7 +18,11 @@ const authInterceptor = (axiosInstance) => {
     async (error) => {
       const originalRequest = error.config;
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      if (
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        error.response.data.errorCode == "TOKEN_EXPIRED"
+      ) {
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
@@ -32,10 +36,10 @@ const authInterceptor = (axiosInstance) => {
 
         try {
           await axiosInstance.get("/auth/refresh");
-
           processQueue(null);
           return axiosInstance(originalRequest);
         } catch (refreshError) {
+          console.log("AXIOS INTERCEPTOR REFRESH ERROR", refreshError);
           processQueue(refreshError);
           return Promise.reject(refreshError);
         } finally {
