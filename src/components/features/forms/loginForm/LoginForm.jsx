@@ -28,26 +28,26 @@ export default function LoginForm() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const fetchData = async () => {
-        const response = await loginService(formData);
-        const res = await response.json();
-        if (!res.success) {
-          throw new Error(res.message);
-        } else {
-          setFetchError("");
-          dispatch(setUser(res.data.user));
-          router.push("/");
-          setIsAuthenticated(true);
-        }
-      };
-      await fetchData();
-    } catch (error) {
-      setFetchError(error.message);
-    } finally {
-      setIsLoading(false);
+    if (e) {
+      e.preventDefault();
+      setIsLoading(true);
+      try {
+        const fetchData = async () => {
+          const response = await loginService(formData);
+          if (response.status == 200) {
+            setFetchError("");
+            dispatch(setUser(response.data.data));
+            router.push("/");
+            setIsAuthenticated(true);
+          }
+        };
+        await fetchData();
+      } catch (error) {
+        // TODO => if unknown error, notify user with toast (error !== USER_NOT_FOUND && error !== WRONG_PASSWORD)
+        setFetchError(error.response.data.errorCode);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 

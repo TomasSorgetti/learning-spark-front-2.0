@@ -28,18 +28,14 @@ export default function RegisterForm() {
     try {
       const fetchData = async () => {
         const response = await registerService(formData);
-        const res = await response.json();
-
-        if (!res.success) {
-          throw new Error(res.errorCode);
-        } else {
+        if (response.status === 200 || response.status === 201) {
           setFetchError("");
           router.push("/verify");
         }
       };
       await fetchData();
     } catch (error) {
-      setFetchError(error.message);
+      setFetchError(error.response.data.errorCode);
     } finally {
       setIsLoading(false);
     }
@@ -47,6 +43,7 @@ export default function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit}>
+      {fetchError && <p>{fetchError}</p>}
       <FormField
         type="text"
         label="Name:"

@@ -2,15 +2,14 @@
 
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import {
-  verifyUserAuthentication,
-  refreshUserAuthentication,
-} from "../lib/slices/auth/authSlice";
-import { setLoadingState } from "../lib/slices/loading/loadingSlice";
 import { useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { useLoading } from "@/providers/LoadingProvider";
+import { checkAuth } from "@/services/auth.service";
+import { setUser } from "@/lib/slices/auth/authSlice";
 
 const AuthProvider = ({ children }) => {
+  const { startLoading, stopLoading } = useLoading();
   const [isAuthenticated, setIsAuthenticated] = useLocalStorage(
     "isAuthenticated",
     false
@@ -21,26 +20,23 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkUserAuthentication = async () => {
       if (isAuthenticated) {
-        dispatch(setLoadingState(true));
+        startLoading();
         try {
-          await dispatch(verifyUserAuthentication());
+          const response = await checkAuth();
+          if (response.status === 200) dispatch(setUser(response.data.data));
         } catch (error) {
-          console.error(error.message);
-          try {
-            await dispatch(refreshUserAuthentication());
-          } catch (refreshError) {
-            console.log(refreshError.message);
-            router.push("/login");
-            setIsAuthenticated(false);
-          }
+          console.error("ERROR:", error);
+          setIsAuthenticated(false);
+          // TODO => if unknown error, notify user with toast
+          router.push("/login");
         } finally {
-          dispatch(setLoadingState(false));
+          stopLoading();
         }
       }
     };
 
     checkUserAuthentication();
-  }, [dispatch, router, isAuthenticated, setIsAuthenticated]);
+  }, [isAuthenticated, dispatch]);
 
   return <>{children}</>;
 };

@@ -7,5 +7,18 @@
   background-color: transparent;
 }
 .loadingBar.loading {
-  background-color: blue;
+  background-color: var(--primaryColor);
+  animation: loadingAnimation 2s linear infinite;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(50%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
