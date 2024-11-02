@@ -37,6 +37,7 @@ export default function LoginForm() {
           if (response.status == 200) {
             setFetchError("");
             dispatch(setUser(response.data.data));
+            document.cookie = "isAuthenticated=true; path=/";
             router.push("/");
             setIsAuthenticated(true);
           }
@@ -44,6 +45,7 @@ export default function LoginForm() {
         await fetchData();
       } catch (error) {
         // TODO => if unknown error, notify user with toast (error !== USER_NOT_FOUND && error !== WRONG_PASSWORD)
+        setIsAuthenticated(false);
         setFetchError(error.response.data.errorCode);
       } finally {
         setIsLoading(false);

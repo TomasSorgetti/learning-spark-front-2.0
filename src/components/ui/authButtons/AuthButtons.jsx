@@ -10,8 +10,10 @@ import authIcon from "@/assets/images/userIcon.png";
 import Image from "next/image";
 import { useState, useRef } from "react";
 import useClickOutside from "@/hooks/useClickOutside";
+import { useRouter } from "next/navigation";
 
 export default function AuthButtons() {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth);
   const [, setIsAuthenticated] = useLocalStorage("isAuthenticated", false);
@@ -28,11 +30,12 @@ export default function AuthButtons() {
     handleActive();
     try {
       const response = await logoutService();
-      if (response.ok) {
+      if (response.status === 200) {
         dispatch(logout());
+         document.cookie =
+           "isAuthenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
         setIsAuthenticated(false);
-      } else {
-        throw new Error(response.statusText);
+        router.push("/auth/login");
       }
     } catch (error) {
       console.log(error);
@@ -46,13 +49,18 @@ export default function AuthButtons() {
       </button>
       <div className={`${styles.menu} ${active ? styles.active : ""}`}>
         {user?.isAuthenticated ? (
-          <button onClick={handleLogout}>Logout</button>
+          <>
+            <Link onClick={handleActive} href="/profile">
+              Profle
+            </Link>
+            <button onClick={handleLogout}>Logout</button>
+          </>
         ) : (
           <>
-            <Link onClick={handleActive} href="/login">
+            <Link onClick={handleActive} href="/auth/login" replace>
               Login
             </Link>
-            <Link onClick={handleActive} href="/register">
+            <Link onClick={handleActive} href="/auth/register" replace>
               Register
             </Link>
           </>

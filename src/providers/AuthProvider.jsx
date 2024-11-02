@@ -27,6 +27,8 @@ const AuthProvider = ({ children }) => {
         } catch (error) {
           console.error("ERROR:", error);
           setIsAuthenticated(false);
+          document.cookie =
+            "isAuthenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
           // TODO => if unknown error, notify user with toast
           router.push("/login");
         } finally {
