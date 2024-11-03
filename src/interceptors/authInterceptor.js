@@ -39,7 +39,6 @@ const authInterceptor = (axiosInstance) => {
           processQueue(null);
           return axiosInstance(originalRequest);
         } catch (refreshError) {
-          console.log("AXIOS INTERCEPTOR REFRESH ERROR", refreshError);
           processQueue(refreshError);
           return Promise.reject(refreshError);
         } finally {
@@ -49,6 +48,8 @@ const authInterceptor = (axiosInstance) => {
 
       if (error.response?.status === 403) {
         console.warn("Access denied:", error.response.data);
+        document.cookie =
+          "isAuthenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
         return Promise.reject(error);
       }
 

@@ -36,9 +36,9 @@ export default function LoginForm() {
           const response = await loginService(formData);
           if (response.status == 200) {
             setFetchError("");
-            dispatch(setUser(response.data.data));
-            document.cookie = "isAuthenticated=true; path=/";
-            router.push("/");
+            // dispatch(setUser(response.data.data));
+            // document.cookie = "isAuthenticated=true; path=/";
+            // router.push("/");
             setIsAuthenticated(true);
           }
         };
@@ -53,11 +53,19 @@ export default function LoginForm() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    const SERVER_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+    window.location.href = `${SERVER_URL}/auth/google`;
+  };
+
   return (
     <>
       {isLoading ? <p>Loading...</p> : null}
       {fetchError ? <p>{fetchError}</p> : null}
       <form onSubmit={handleSubmit}>
+        <button type="button" onClick={handleGoogleLogin}>
+          Iniciar Sesión con Google
+        </button>
         <FormField
           type="email"
           label="Email:"

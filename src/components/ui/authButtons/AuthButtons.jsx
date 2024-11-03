@@ -16,7 +16,6 @@ export default function AuthButtons() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth);
-  const [, setIsAuthenticated] = useLocalStorage("isAuthenticated", false);
   const [active, setActive] = useState(false);
   const authMenuRef = useRef(null);
 
@@ -30,11 +29,8 @@ export default function AuthButtons() {
     handleActive();
     try {
       const response = await logoutService();
-      if (response.status === 200) {
+      if (response.data.success) {
         dispatch(logout());
-         document.cookie =
-           "isAuthenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-        setIsAuthenticated(false);
         router.push("/auth/login");
       }
     } catch (error) {
